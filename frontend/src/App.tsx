@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import PortalCard from './components/PortalCard'
 import formatEventTimestamp from './utils/formatEventTimestamp'
 import './App.css'
+import { API_URL } from './config'
 
 type Portal = {
   id: string
@@ -42,8 +43,8 @@ function App() {
   // Обновляет порталы и общий запас существ из backend.
   const loadPortals = useCallback(() => {
     Promise.all([
-      fetch('http://127.0.0.1:8000/portals'),
-      fetch('http://127.0.0.1:8000/creatures'),
+      fetch(`${API_URL}/portals`),
+      fetch(`${API_URL}/creatures`),
     ])
       .then(async ([portalsResponse, stockResponse]) => {
         if (!portalsResponse.ok || !stockResponse.ok) {
@@ -77,7 +78,7 @@ function App() {
     setEventsError('')
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/events')
+      const response = await fetch(`${API_URL}/events`)
 
       if (!response.ok) {
         throw new Error('Не удалось загрузить общий журнал событий.')
@@ -129,7 +130,7 @@ function App() {
     setCreateError('')
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/portals', {
+      const response = await fetch(`${API_URL}/portals`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

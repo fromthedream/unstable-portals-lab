@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import formatEventTimestamp from '../utils/formatEventTimestamp'
+import { API_URL } from '../config'
 
 type PortalAction = 'stabilize' | 'close' | 'observe' | 'questionable' | 'open'
 
@@ -97,7 +98,7 @@ const loadEvents = async () => {
   setEventsError('')
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/events')
+    const response = await fetch(`${API_URL}/events`)
 
     if (!response.ok) {
       throw new Error('Не удалось загрузить историю изменений.')
@@ -159,7 +160,7 @@ const handleAction = async (action: PortalAction) => {
 
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/portals/${id}/actions`,
+      `${API_URL}/portals/${id}/actions`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
