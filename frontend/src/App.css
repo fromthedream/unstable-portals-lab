@@ -330,6 +330,33 @@ button:disabled {
   font-weight: 600;
 }
 
+.metric-value {
+  display: inline-block;
+  min-width: 42px;
+  padding: 4px 8px;
+  border: 1px solid;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.metric-danger {
+  border-color: #f87171;
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+.metric-warning {
+  border-color: #facc15;
+  background: #422006;
+  color: #fde68a;
+}
+
+.metric-healthy {
+  border-color: #4ade80;
+  background: #14532d;
+  color: #bbf7d0;
+}
+
 .creature-counter {
   display: flex;
   align-items: center;

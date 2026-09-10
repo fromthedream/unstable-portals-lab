@@ -29,6 +29,18 @@ type PortalCardProps = {
   onEventChange: () => void
 }
 
+function getMetricClass(value: number, metric: 'energy' | 'stability') {
+  if (metric === 'energy') {
+    if (value <= 20 || value >= 80) return 'metric-danger'
+    if (value <= 35 || value >= 65) return 'metric-warning'
+    return 'metric-healthy'
+  }
+
+  if (value <= 30) return 'metric-danger'
+  if (value < 70) return 'metric-warning'
+  return 'metric-healthy'
+}
+
 function PortalCard({
   id,
   portalInstanceId,
@@ -322,12 +334,16 @@ const handleDelete = async () => {
       <div className="stats">
         <div className="stat">
           <span className="stat-label">Энергия</span>
-          <span className="stat-value">{energy}</span>
+          <span className={`stat-value metric-value ${getMetricClass(energy, 'energy')}`}>
+            {energy}
+          </span>
         </div>
 
         <div className="stat">
           <span className="stat-label">Стабильность</span>
-          <span className="stat-value">{stability}</span>
+          <span className={`stat-value metric-value ${getMetricClass(stability, 'stability')}`}>
+            {stability}
+          </span>
         </div>
 
         <div className="stat">

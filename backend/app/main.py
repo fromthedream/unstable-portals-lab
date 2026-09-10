@@ -377,9 +377,12 @@ def portal_action(
                 portal.stability - 20,
             )
 
-            portal.energy = max(
-                0,
-                round(portal.energy + (portal.energy - 50) * 0.2),
+            portal.energy = min(
+                100,
+                max(
+                    0,
+                    round(portal.energy + (portal.energy - 50) * 0.2),
+                ),
             )
 
         collapse_minutes = calculate_collapse_minutes(

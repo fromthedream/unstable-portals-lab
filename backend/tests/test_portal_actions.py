@@ -306,3 +306,44 @@ def test_closed_portal_has_no_risk():
     assert response.json()["risk_level"] is None
 
     db.close()
+
+
+def test_reopen_collapsed_portal_clamps_high_energy():
+    db = SessionLocal()
+
+    portal = Portal(
+        code="P-TEST-REOPEN-HIGH-ENERGY",
+        name="High Energy Test",
+        destination_world="Test World",
+        energy=100,
+        stability=70,
+        creatures_inside=0,
+        status="COLLAPSED",
+        collapse_at=datetime.now(timezone.utc) - timedelta(minutes=1),
+    )
+
+    db.add(portal)
+    db.commit()
+
+    response = client.post(
+        "/portals/P-TEST-REOPEN-HIGH-ENERGY/actions",
+        json={"action": "open"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["status"] == "OPEN"
+    assert data["energy"] == 100
+    assert 0 <= data["energy"] <= 100
+    assert data["collapse_at"]
+    assert data["risk"] is not None
+    assert data["risk_level"] is not None
+
+    db.refresh(portal)
+
+    assert portal.status == "OPEN"
+    assert 0 <= portal.energy <= 100
+
+    db.close()
