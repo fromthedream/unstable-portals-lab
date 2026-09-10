@@ -211,6 +211,9 @@ def portal_action(
 
     if action == "delete":
         # Save the event before deletion; portal_code keeps it visible afterward.
+        bank = get_creature_bank(db)
+        bank.free_creatures += portal.creatures_inside
+
         event = Event(
             portal_id=portal.id,
             portal_code=portal.code,

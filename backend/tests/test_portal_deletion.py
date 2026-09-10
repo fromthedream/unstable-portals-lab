@@ -227,3 +227,36 @@ def test_deleting_last_portal_returns_empty_list(isolated_portals):
 
     assert client.get("/portals").json() == []
     db.close()
+
+
+def test_delete_portal_returns_creatures_to_bank(isolated_portals):
+    db = SessionLocal()
+    portal = Portal(
+        code="P-TEST-DELETE-CREATURES",
+        name="Creature Delete Test",
+        destination_world="Test World",
+        energy=50,
+        stability=70,
+        creatures_inside=3,
+        status="OPEN",
+        collapse_at=datetime.now(timezone.utc) + timedelta(minutes=10),
+    )
+    bank = db.query(CreatureBank).filter(CreatureBank.id == 1).first()
+    assert bank is not None
+    bank.free_creatures = 4
+
+    db.add(portal)
+    db.commit()
+
+    response = client.post(
+        "/portals/P-TEST-DELETE-CREATURES/actions",
+        json={"action": "delete"},
+    )
+
+    assert response.status_code == 200
+
+    db.refresh(bank)
+    assert bank.free_creatures == 7
+    assert db.query(Portal).filter(Portal.code == "P-TEST-DELETE-CREATURES").first() is None
+
+    db.close()
