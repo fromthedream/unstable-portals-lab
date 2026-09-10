@@ -203,7 +203,7 @@ const handleCreatureChange = async (action: 'add_creatures' | 'remove_creatures'
 
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/portals/${id}/actions`,
+      `${API_URL}/portals/${id}/actions`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -247,7 +247,7 @@ const handleDelete = async () => {
 
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/portals/${id}/actions`,
+      `${API_URL}/portals/${id}/actions`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
