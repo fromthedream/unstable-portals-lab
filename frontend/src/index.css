@@ -1,0 +1,11 @@
+html {
+  background: #0f1419;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #0f1419;
+  color: #e8edf2;
+}
