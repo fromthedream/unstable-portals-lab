@@ -506,7 +506,7 @@ function App() {
             </section>
             <section className="worklog-section">
               <h3>Тестирование</h3>
-              <p className="test-result"><strong>Backend:</strong> 22 passed, 1 warning</p>
+              <p className="test-result"><strong>Backend:</strong> 26 passed, 1 warning</p>
               <p className="test-result"><strong>Frontend:</strong> <code>npm run build</code> — успешно</p>
               <p className="worklog-note">Frontend unit tests в проекте не заявлены.</p>
             </section>

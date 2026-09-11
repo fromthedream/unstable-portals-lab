@@ -152,7 +152,7 @@ npm run build
 
 Последний полный результат проверок:
 
-- Backend: **25 passed, 1 warning**;
+- Backend: **26 passed, 1 warning**;
 - Frontend: **`npm run lint` — успешно**;
 - Frontend: **`npm run build` — успешно**.
 
