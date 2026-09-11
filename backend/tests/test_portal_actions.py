@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from backend.app.database import SessionLocal
 from backend.app.main import app
-from backend.app.models import Portal
+from backend.app.models import Event, Portal
 
 
 client = TestClient(app)
@@ -194,6 +194,113 @@ def test_stabilize_portal_updates_parameters():
 
     assert portal.stability == 80
     assert portal.energy == 74
+
+    db.close()
+
+
+def test_stabilize_portal_has_cooldown_after_state_change():
+    db = SessionLocal()
+    db.query(Event).filter(
+        Event.portal_code == "P-TEST-STABILIZE-COOLDOWN",
+    ).delete()
+    db.commit()
+
+    portal = Portal(
+        code="P-TEST-STABILIZE-COOLDOWN",
+        name="Stabilize Cooldown Test",
+        destination_world="Test World",
+        energy=50,
+        stability=60,
+        creatures_inside=0,
+        status="OPEN",
+        collapse_at=datetime.now(timezone.utc) + timedelta(minutes=10),
+    )
+
+    db.add(portal)
+    db.commit()
+
+    first_response = client.post(
+        "/portals/P-TEST-STABILIZE-COOLDOWN/actions",
+        json={"action": "stabilize"},
+    )
+    assert first_response.status_code == 200
+    assert first_response.json()["status"] == "STABILIZED"
+
+    observe_response = client.post(
+        "/portals/P-TEST-STABILIZE-COOLDOWN/actions",
+        json={"action": "observe"},
+    )
+    assert observe_response.status_code == 200
+    assert observe_response.json()["status"] == "OBSERVATION"
+
+    second_response = client.post(
+        "/portals/P-TEST-STABILIZE-COOLDOWN/actions",
+        json={"action": "stabilize"},
+    )
+
+    assert second_response.status_code == 200
+    assert "Повторная стабилизация будет доступна через" in (
+        second_response.json()["error"]
+    )
+
+    db.refresh(portal)
+    assert portal.status == "OBSERVATION"
+    assert portal.stability == 80
+
+    db.close()
+
+
+def test_stabilize_portal_can_be_stabilized_after_cooldown():
+    db = SessionLocal()
+
+    portal = Portal(
+        code="P-TEST-STABILIZE-EXPIRED",
+        name="Expired Cooldown Test",
+        destination_world="Test World",
+        energy=50,
+        stability=60,
+        creatures_inside=0,
+        status="OPEN",
+        collapse_at=datetime.now(timezone.utc) + timedelta(minutes=10),
+    )
+
+    db.add(portal)
+    db.commit()
+
+    first_response = client.post(
+        "/portals/P-TEST-STABILIZE-EXPIRED/actions",
+        json={"action": "stabilize"},
+    )
+    assert first_response.status_code == 200
+
+    observe_response = client.post(
+        "/portals/P-TEST-STABILIZE-EXPIRED/actions",
+        json={"action": "observe"},
+    )
+    assert observe_response.status_code == 200
+
+    stabilization_event = (
+        db.query(Event)
+        .filter(
+            Event.portal_id == portal.id,
+            Event.action == "Портал стабилизирован",
+        )
+        .first()
+    )
+    assert stabilization_event is not None
+    stabilization_event.created_at = datetime.now(timezone.utc) - timedelta(
+        seconds=61,
+    )
+    db.commit()
+
+    second_response = client.post(
+        "/portals/P-TEST-STABILIZE-EXPIRED/actions",
+        json={"action": "stabilize"},
+    )
+
+    assert second_response.status_code == 200
+    assert second_response.json()["status"] == "STABILIZED"
+    assert second_response.json()["stability"] == 100
 
     db.close()
 

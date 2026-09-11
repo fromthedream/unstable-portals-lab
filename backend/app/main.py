@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from math import ceil
 import random
 
 from fastapi import Depends, FastAPI
@@ -14,6 +15,8 @@ from .models import CreatureBank, Event, Portal
 from .schemas import PortalAction, PortalCreate
 
 Base.metadata.create_all(bind=engine)
+
+STABILIZATION_COOLDOWN_SECONDS = 60
 
 if "portal_code" not in {
     column["name"] for column in inspect(engine).get_columns("events")
@@ -353,6 +356,35 @@ def portal_action(
 
     # Стабилизация
     if action == "stabilize":
+        last_stabilization = (
+            db.query(Event)
+            .filter(
+                Event.portal_id == portal.id,
+                Event.action == "Портал стабилизирован",
+            )
+            .order_by(Event.created_at.desc())
+            .first()
+        )
+
+        if last_stabilization is not None:
+            stabilized_at = last_stabilization.created_at
+
+            if stabilized_at.tzinfo is None:
+                stabilized_at = stabilized_at.replace(tzinfo=timezone.utc)
+
+            cooldown_remaining = (
+                STABILIZATION_COOLDOWN_SECONDS
+                - (datetime.now(timezone.utc) - stabilized_at).total_seconds()
+            )
+
+            if cooldown_remaining > 0:
+                return {
+                    "error": (
+                        "Повторная стабилизация будет доступна через "
+                        f"{ceil(cooldown_remaining)} сек."
+                    )
+                }
+
         portal.stability = min(
             100,
             portal.stability + 20,

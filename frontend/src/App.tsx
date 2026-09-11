@@ -348,15 +348,22 @@ function App() {
             <p className="muted-text">Событий пока нет</p>
           )}
           {!eventsLoading && !eventsError && events.length > 0 && (
-            <ul className="global-event-list">
-              {events.map((event, index) => (
-                <li key={`${event.timestamp}-${event.portal_id}-${index}`}>
-                  <time>{formatEventTimestamp(event.timestamp)}</time>
-                  <span>{event.portal_id}</span>
-                  <span>{event.action}</span>
-                </li>
-              ))}
-            </ul>
+            <>
+              <div className="global-event-header" aria-hidden="true">
+                <span>Время</span>
+                <span>ID портала</span>
+                <span>Состояние</span>
+              </div>
+              <ul className="global-event-list">
+                {events.map((event, index) => (
+                  <li key={`${event.timestamp}-${event.portal_id}-${index}`}>
+                    <time>{formatEventTimestamp(event.timestamp)}</time>
+                    <span>{event.portal_id}</span>
+                    <span>{event.action}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </section>
       ) : (

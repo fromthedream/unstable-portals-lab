@@ -590,10 +590,21 @@ button:disabled {
   list-style: none;
 }
 
+.global-event-header,
 .global-event-list li {
   display: grid;
   grid-template-columns: minmax(170px, auto) 80px 1fr;
   gap: 16px;
+}
+
+.global-event-header {
+  padding: 0 12px 8px;
+  color: #8995a3;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.global-event-list li {
   padding: 12px;
   border-radius: 6px;
   background: #202832;
@@ -604,6 +615,7 @@ button:disabled {
 }
 
 @media (max-width: 600px) {
+  .global-event-header,
   .global-event-list li {
     grid-template-columns: 1fr;
     gap: 4px;
