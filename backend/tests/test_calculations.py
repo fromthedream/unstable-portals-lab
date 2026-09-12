@@ -8,6 +8,7 @@ from backend.app.calculations import (
 )
 
 
+# Проверяет базовый расчёт риска.
 def test_risk_calculation():
     risk = calculate_risk(
         energy=50,
@@ -18,6 +19,7 @@ def test_risk_calculation():
     assert risk == pytest.approx(54.1666667)
 
 
+# Проверяет рост риска при низкой энергии.
 def test_low_energy_increases_risk():
     low_energy_risk = calculate_risk(
         energy=0,
@@ -33,6 +35,7 @@ def test_low_energy_increases_risk():
     assert low_energy_risk > normal_energy_risk
 
 
+# Проверяет рост риска при высокой энергии.
 def test_high_energy_increases_risk():
     high_energy_risk = calculate_risk(
         energy=100,
@@ -48,6 +51,7 @@ def test_high_energy_increases_risk():
     assert high_energy_risk > normal_energy_risk
 
 
+# Проверяет расчёт времени до коллапса.
 def test_collapse_time_calculation():
     minutes = calculate_collapse_minutes(
         energy=50,
@@ -57,6 +61,7 @@ def test_collapse_time_calculation():
     assert minutes == 15.0
 
 
+# Проверяет изменение срочности в зависимости от времени.
 def test_urgency_changes_with_time():
     assert calculate_urgency(45) == 25
     assert calculate_urgency(20) == 50
@@ -64,6 +69,7 @@ def test_urgency_changes_with_time():
     assert calculate_urgency(3) == 100
 
 
+# Проверяет соответствие риска уровням опасности.
 def test_risk_level():
     assert get_risk_level(20) == "LOW"
     assert get_risk_level(40) == "MEDIUM"

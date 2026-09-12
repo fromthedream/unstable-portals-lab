@@ -10,6 +10,7 @@ from backend.app.models import Event, Portal
 client = TestClient(app)
 
 
+# Проверяет запрет наблюдения за критическим порталом.
 def test_critical_portal_cannot_be_observed():
     db = SessionLocal()
 
@@ -43,6 +44,7 @@ def test_critical_portal_cannot_be_observed():
     db.close()
 
 
+# Проверяет подтверждение закрытия портала с существами.
 def test_close_portal_with_creatures_requires_confirmation():
     db = SessionLocal()
 
@@ -81,6 +83,7 @@ def test_close_portal_with_creatures_requires_confirmation():
     db.close()
 
 
+# Проверяет добавление и удаление существ из портала.
 def test_add_and_remove_creatures():
     db = SessionLocal()
 
@@ -127,6 +130,7 @@ def test_add_and_remove_creatures():
     db.close()
 
 
+# Проверяет запрет управления существами в закрытом портале.
 def test_closed_portal_cannot_manage_creatures():
     db = SessionLocal()
 
@@ -160,6 +164,7 @@ def test_closed_portal_cannot_manage_creatures():
     db.close()
 
 
+# Проверяет обновление параметров при стабилизации портала.
 def test_stabilize_portal_updates_parameters():
     db = SessionLocal()
 
@@ -198,6 +203,7 @@ def test_stabilize_portal_updates_parameters():
     db.close()
 
 
+# Проверяет задержку между повторными стабилизациями.
 def test_stabilize_portal_has_cooldown_after_state_change():
     db = SessionLocal()
     db.query(Event).filter(
@@ -250,6 +256,7 @@ def test_stabilize_portal_has_cooldown_after_state_change():
     db.close()
 
 
+# Проверяет стабилизацию после завершения задержки.
 def test_stabilize_portal_can_be_stabilized_after_cooldown():
     db = SessionLocal()
 
@@ -305,6 +312,7 @@ def test_stabilize_portal_can_be_stabilized_after_cooldown():
     db.close()
 
 
+# Проверяет ухудшение параметров при повторном открытии.
 def test_reopen_collapsed_portal_worsens_parameters():
     db = SessionLocal()
 
@@ -344,6 +352,7 @@ def test_reopen_collapsed_portal_worsens_parameters():
     db.close()
 
 
+# Проверяет ограничение энергии снизу при повторном открытии.
 def test_reopen_collapsed_portal_clamps_low_energy():
     db = SessionLocal()
 
@@ -385,6 +394,7 @@ def test_reopen_collapsed_portal_clamps_low_energy():
     db.close()
 
 
+# Проверяет отсутствие риска у закрытого портала.
 def test_closed_portal_has_no_risk():
     db = SessionLocal()
 
@@ -415,6 +425,7 @@ def test_closed_portal_has_no_risk():
     db.close()
 
 
+# Проверяет ограничение энергии сверху при повторном открытии.
 def test_reopen_collapsed_portal_clamps_high_energy():
     db = SessionLocal()
 

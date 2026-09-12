@@ -60,6 +60,8 @@ def get_creature_bank(db: Session) -> CreatureBank:
         bank = CreatureBank(id=1, free_creatures=20)
         db.add(bank)
         db.flush()
+    elif db.query(Portal).count() == 0:
+        bank.free_creatures = 20
 
     return bank
 

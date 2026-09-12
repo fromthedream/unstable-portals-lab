@@ -71,6 +71,7 @@ def add_portal(db, code: str) -> Portal:
     return portal
 
 
+# Проверяет сохранение события удаления портала.
 def test_delete_portal_saves_deletion_event(isolated_portals):
     db = SessionLocal()
     portal = add_portal(db, "P-TEST-DELETE")
@@ -95,6 +96,7 @@ def test_delete_portal_saves_deletion_event(isolated_portals):
     db.close()
 
 
+# Проверяет отсутствие удалённого портала в списке.
 def test_deleted_portal_is_absent_from_portals(isolated_portals):
     db = SessionLocal()
     add_portal(db, "P-TEST-ABSENT")
@@ -109,6 +111,7 @@ def test_deleted_portal_is_absent_from_portals(isolated_portals):
     db.close()
 
 
+# Проверяет доступность событий после удаления портала.
 def test_events_work_after_portal_deletion(isolated_portals):
     db = SessionLocal()
     add_portal(db, "P-TEST-EVENTS")
@@ -125,6 +128,7 @@ def test_events_work_after_portal_deletion(isolated_portals):
     db.close()
 
 
+# Проверяет повторное использование среднего свободного идентификатора.
 def test_deleted_middle_id_is_reused(isolated_portals):
     db = SessionLocal()
     add_portal(db, "P-001")
@@ -139,6 +143,7 @@ def test_deleted_middle_id_is_reused(isolated_portals):
     db.close()
 
 
+# Проверяет повторное использование первого свободного идентификатора.
 def test_first_missing_id_is_reused(isolated_portals):
     db = SessionLocal()
     add_portal(db, "P-002")
@@ -152,6 +157,7 @@ def test_first_missing_id_is_reused(isolated_portals):
     db.close()
 
 
+# Проверяет сохранение истории удалённого портала.
 def test_deleted_portal_history_is_kept_for_global_events(isolated_portals):
     db = SessionLocal()
     add_portal(db, "P-001")
@@ -176,6 +182,7 @@ def test_deleted_portal_history_is_kept_for_global_events(isolated_portals):
     db.close()
 
 
+# Проверяет разделение истории для нового портала с тем же кодом.
 def test_new_same_code_has_separate_history(isolated_portals):
     db = SessionLocal()
     add_portal(db, "P-001")
@@ -216,6 +223,7 @@ def test_new_same_code_has_separate_history(isolated_portals):
     db.close()
 
 
+# Проверяет пустой список после удаления последнего портала.
 def test_deleting_last_portal_returns_empty_list(isolated_portals):
     db = SessionLocal()
     add_portal(db, "P-001")
@@ -229,6 +237,7 @@ def test_deleting_last_portal_returns_empty_list(isolated_portals):
     db.close()
 
 
+# Проверяет возврат существ в банк при удалении портала.
 def test_delete_portal_returns_creatures_to_bank(isolated_portals):
     db = SessionLocal()
     portal = Portal(
